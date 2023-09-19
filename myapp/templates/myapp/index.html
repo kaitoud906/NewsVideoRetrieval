@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+<body style="background-color: grey">
+    <div class="container">
+        <form action="{% url 'similarity' %}" method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <input type="text" placeholder="Search" name="query" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            {% for image_url in image_urls %}
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <img src="{{ image_url}}" alt="Image" class="card-img-top">
+                    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+

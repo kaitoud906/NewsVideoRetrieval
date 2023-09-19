@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image List</title>
+</head>
+<body>
+    <h1>Images</h1>
+    <ul>
+        {% for image_url in image_urls %}
+            <li><img src="{{ image_url }}" alt="Image"></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

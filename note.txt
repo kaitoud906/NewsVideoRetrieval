@@ -1,0 +1,11 @@
+Load embeddings: python manage.py load_embeddings
+
+password: 123456 for postgreSQL
+
+chcp 1252
+
+psql -U postgres
+
+
+python manage.py makemigrations
+python manage.py migrate
