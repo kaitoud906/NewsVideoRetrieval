@@ -1,25 +1,21 @@
 from django.shortcuts import render
 from .models import ImageEmbedding
-from django.http import HttpResponseRedirect
-from .forms import ImageUploadForm
-from django.conf import settings
-from django.db.models import F
-from scipy.spatial.distance import cosine
-from django.http import JsonResponse
+# from django.http import HttpResponseRedirect
+# from .forms import ImageUploadForm
+# from django.conf import settings
+# from django.db.models import F
+# from scipy.spatial.distance import cosine
+# from django.http import JsonResponse
 
 import numpy as np
-import os
 import json
-from glob import glob
 import torch
 from transformers import CLIPProcessor, CLIPModel, CLIPTokenizer
-from django.core.files import File
 from sklearn.metrics.pairwise import cosine_similarity
-from django.core.paginator import Paginator
 
+# from django.core.paginator import Paginator
 
-from django.db.models import F, Func, Value, FloatField
-from django.contrib.postgres.fields import ArrayField
+from django.db.models import Func
 
 class GetImageEmbedding(Func):
     function = 'get_image_embedding'
@@ -47,12 +43,8 @@ def index(request):
 def display_images(request):
     # Get a list of image filenames in the 'media' directory
     images = ImageEmbedding.objects.all()
-    images = images[:10]
-    # media_dir = os.path.join(settings.MEDIA_ROOT,'L01_V001')
-    # # image_urls = glob('D:\AI_Challenge\Data\\tmp_keyframes\\*\\*.jpg')
-    # image_files = [f for f in os.listdir(media_dir) if os.path.isfile(os.path.join(media_dir, f))]
-    # image_urls = [os.path.join(settings.MEDIA_URL,'L01_V001', f) for f in image_files]
-    # image_urls = [image.image_path.url for image in images]
+    images = images[:100]
+
     image_urls = []
     for e in images:
         node = {
@@ -61,26 +53,17 @@ def display_images(request):
           "video": e.image_path.url.split("/")[-2]
         }
         image_urls.append(node)
-    # print(node)
-    # print(e.image_path.url)
-    paginator = Paginator(image_urls,per_page=25)
-    page_number =  request.GET.get('page')
-    page = 
-    data = {
-        'html': render(request, 'myapp/index.html', {'image_urls': image_urls}),
-        'has_more': image_urls.has
-    }
+
+    # paginator = Paginator(image_urls,per_page=25)
+    # page_number =  request.GET.get('page')
+    # page = paginator.get_page(page_number)
+    # data = {
+    #     'html': render(request, 'myapp/index.html', {'image_urls': image_urls}),
+    #     'has_more': page.has_next(),
+    # }
+    # return JsonResponse(data)
+
     return render(request, 'myapp/index.html', {'image_urls': image_urls})
-
-
-def load_more_data(request):
-    # Your logic to retrieve more data, for example, using Paginator
-    # Serialize the data to JSON
-    data = {
-        'html': render(request, 'partial_template.html', {'objects': queryset}).content.decode('utf-8'),
-        'has_more': queryset.has_next(),  # Indicator if there's more data
-    }
-    return JsonResponse(data)
 
 def get_single_text_embedding(text):
     inputs = tokenizer(text, return_tensors = "pt")
@@ -98,26 +81,15 @@ def similarity(request):
         query_text = request.POST.get('query')
 
     query_embedding = get_single_text_embedding(query_text).squeeze(0)
-    # print(query_embedding.shape)
     image_items = np.array(ImageEmbedding.objects.all())
     image_embeddings = [item.get_image_embedding() for item in ImageEmbedding.objects.all()]
 
     similarities = cosine_similarity([query_embedding], image_embeddings)[0]
     sorted_indices = np.argsort(similarities)[::-1]
-    # image_embeddings = np.array(image_embeddings)
     image_items = image_items[sorted_indices].tolist()
 
-    # Sort the results by similarity
-    # images_with_similarity.sort(key=lambda x: x[1]) 
-    # Calculate similarities and order the images by similarity (assuming L2 distance here)
-    # images = ImageEmbedding.objects.annotate(
-    #      similarity= 1 - cosine(get_image_embedding(F('image_embedding')), query_embedding)).order_by('similarity')
-
-    # first_image_embedding = ImageEmbedding.objects.first()
-    # print("image embedding shape:",first_image_embedding.get_image_embedding().shape)
     # Extract image URLs
-    top_k_images = image_items[:100]
-    # image_urls = [image.image_path.url for image in top_k_images]
+    top_k_images = image_items[:200]
 
     image_urls = []
     for e in top_k_images:
@@ -127,7 +99,5 @@ def similarity(request):
           "video": e.image_path.url.split("/")[0]
         }
         image_urls.append(node)
-
-    # image_urls = [first_image_embedding.image_path]
     
     return render(request, 'myapp/index.html', {'image_urls': image_urls})

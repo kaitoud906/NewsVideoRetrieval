@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from django.contrib import admin
 
 urlpatterns = [
     path('', views.display_images, name='index'),
