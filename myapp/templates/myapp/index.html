@@ -28,17 +28,121 @@
         </form>
     </div>
     
-    <div class="container">
-        <div class="row">
-            {% for image_url in image_urls %}
-            <div class="col-md-3 mb-3">
-                <div class="card">
-                    <img src="{{ image_url}}" alt="Image" class="card-img-top">
-                    
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+    <div class="container" id="data-container">
+        {% include 'data.html' %}
     </div>
 </body>
+
+<script type="text/javascript">
+    
+    function createModal(video_name, time, array_frame) {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.style.display = "block";
+    const modalDialog = document.createElement('div');
+    modalDialog.classList.add('modal-dialog');
+    modalDialog.classList.add('modal-lg');
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    const modalHead = document.createElement('div');
+    modalHead.classList.add('modal-header');
+
+    const headTitle = document.createElement('div');
+    headTitle.classList.add("modal-title");
+    const click_ptr = document.createElement('div');
+    click_ptr.classList.add('btn-primary');
+    click_ptr.classList.add('btn');
+    click_ptr.innerHTML = "Xem frame";
+    click_ptr.onclick = function () {
+        let str = `<div class="row">`;
+        str += `<div class="col-4">Video: ${video_name}</div>`;
+        let fps = array_frame[6];
+        let currentTime = video.currentTime;
+        for (let t = Math.round(currentTime - 2); t < currentTime + 2; t++) {
+            if (t < 0 || t > video.duration) {
+                continue;
+            }
+            let min = Math.floor(t / 60);
+            let sec = t % 60;
+            if (min < 10) {
+                min = "0" + min;
+            }
+            if (sec < 10) {
+                sec = "0" + sec;
+            }
+            str += `<div class="col-4">Time : ${Math.round(min)} : ${sec} - frameid ${t * fps}</div>`;
+        }
+        str += `</div>`;
+        document.getElementById("my_result").innerHTML = str;
+    };
+    headTitle.appendChild(click_ptr);
+    modalHead.appendChild(headTitle);
+
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('btn-close');
+    closeButton.addEventListener("click", function () { modal.remove(); });
+
+    modalHead.appendChild(closeButton);
+    const modalBody = document.createElement('div');
+    modalBody.classList.add('modal-body');
+
+    const video = document.createElement('video');
+    video.controls = true;
+    video.style.width = "100%";
+    const source = document.createElement('source');
+    source.setAttribute("src", `/media/${encodeURIComponent(`${video_name}`)}.mp4`);
+    source.setAttribute("type", `video/mp4`);
+    video.appendChild(source);
+    video.currentTime = time;
+    modalBody.appendChild(video);
+    
+    const result_p = document.createElement('p');
+    result_p.setAttribute("id", "my_result");
+    modalBody.appendChild(result_p);
+    
+    modalContent.appendChild(modalHead);
+    modalContent.appendChild(modalBody);
+    modalDialog.appendChild(modalContent);
+    modal.appendChild(modalDialog);
+    document.body.appendChild(modal);
+}
+
+function createGetTimeForVideo(video_name, frame_id){
+    fetch(`/media/map-keyframes/${encodeURIComponent(`${video_name}`)}.csv`)
+    .then(response => response.text()).then(data => {
+        let index = 4 * frame_id + 1;
+        let array_frame = data.replaceAll("\n", ",").replaceAll("\r", "").split(",");
+        createModal(video_name, array_frame[index], array_frame);
+    }).catch(error => console.log(error));
+}
+
+var isLoading = false;
+var page = 2; // Initial page number (if applicable)
+
+function loadMoreData() {
+    if (isLoading) return;
+    isLoading = true;
+    $.ajax({
+        url: '/load_more_data/',  // URL to your Django view
+        data: {'page': page},      // Additional data to pass to the view
+        dataType: 'json',
+        success: function(data) {
+            if (data.has_more) {
+                $('#data-container').append(data.html);
+                page++;
+            }
+            isLoading = false;
+        }
+    });
+}
+
+$(document).ready(function() {
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() >= $('#data-container').height() - 200) {
+            loadMoreData();
+        }
+    });
+});
+</script>
 

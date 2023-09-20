@@ -1,0 +1,9 @@
+<div class="row">
+    {% for node in image_urls %}
+    <div class="col-md-3 mb-3" id="video-{{ node.video }}" onclick='createGetTimeForVideo("{{ node.video }}", "{{ node.frame_id }}")'>
+        <div class="card" id="frame-{{ node.frame_id }}">
+            <img src="{{ node.url }}" alt="Image" class="card-img-top">
+        </div>
+    </div>
+    {% endfor %}
+</div>

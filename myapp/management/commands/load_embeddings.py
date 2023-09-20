@@ -9,11 +9,11 @@ class Command(BaseCommand):
     help = 'Load image embeddings into the database'
 
     def handle(self, *args, **options):
-        all_keyframe = glob('D:\AI_Challenge\Data\\tmp_keyframes\\*\\*.jpg')
+        all_keyframe = glob('D:\AI_Challenge\Data\\keyframes\\*\\*.jpg')
         video_keyframe_dict={}
         for kf_path in all_keyframe:
             _, vid, kf = kf_path[:-4].rsplit('\\',2)
-            relative_path = kf_path.split('\\',4)[-1]
+            relative_path = kf_path.split('\\',3)[-1]
             if vid not in video_keyframe_dict.keys():
                 video_keyframe_dict[vid] = [relative_path]
             else:

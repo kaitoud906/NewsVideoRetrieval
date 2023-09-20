@@ -134,6 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Add 'django.contrib.staticfiles' to the 'INSTALLED_APPS' list
 
 
-EXTERNAL_IMAGE_PATH = 'D:\AI_Challenge\Data\keyframes'
+EXTERNAL_IMAGE_PATH = 'D:\AI_Challenge\Data'
 MEDIA_ROOT = EXTERNAL_IMAGE_PATH
 MEDIA_URL = '/media/'

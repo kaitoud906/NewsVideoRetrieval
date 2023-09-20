@@ -5,6 +5,7 @@ from .forms import ImageUploadForm
 from django.conf import settings
 from django.db.models import F
 from scipy.spatial.distance import cosine
+from django.http import JsonResponse
 
 import numpy as np
 import os
@@ -14,6 +15,7 @@ import torch
 from transformers import CLIPProcessor, CLIPModel, CLIPTokenizer
 from django.core.files import File
 from sklearn.metrics.pairwise import cosine_similarity
+from django.core.paginator import Paginator
 
 
 from django.db.models import F, Func, Value, FloatField
@@ -45,13 +47,40 @@ def index(request):
 def display_images(request):
     # Get a list of image filenames in the 'media' directory
     images = ImageEmbedding.objects.all()
+    images = images[:10]
     # media_dir = os.path.join(settings.MEDIA_ROOT,'L01_V001')
     # # image_urls = glob('D:\AI_Challenge\Data\\tmp_keyframes\\*\\*.jpg')
     # image_files = [f for f in os.listdir(media_dir) if os.path.isfile(os.path.join(media_dir, f))]
     # image_urls = [os.path.join(settings.MEDIA_URL,'L01_V001', f) for f in image_files]
-    image_urls = [image.image_path.url for image in images]
-
+    # image_urls = [image.image_path.url for image in images]
+    image_urls = []
+    for e in images:
+        node = {
+          "url": e.image_path.url,
+          "frame_id": e.image_path.url.split("/")[-1].split(".")[0],
+          "video": e.image_path.url.split("/")[-2]
+        }
+        image_urls.append(node)
+    # print(node)
+    # print(e.image_path.url)
+    paginator = Paginator(image_urls,per_page=25)
+    page_number =  request.GET.get('page')
+    page = 
+    data = {
+        'html': render(request, 'myapp/index.html', {'image_urls': image_urls}),
+        'has_more': image_urls.has
+    }
     return render(request, 'myapp/index.html', {'image_urls': image_urls})
+
+
+def load_more_data(request):
+    # Your logic to retrieve more data, for example, using Paginator
+    # Serialize the data to JSON
+    data = {
+        'html': render(request, 'partial_template.html', {'objects': queryset}).content.decode('utf-8'),
+        'has_more': queryset.has_next(),  # Indicator if there's more data
+    }
+    return JsonResponse(data)
 
 def get_single_text_embedding(text):
     inputs = tokenizer(text, return_tensors = "pt")
@@ -62,6 +91,7 @@ def get_single_text_embedding(text):
 
 def get_image_embedding(image_retrieve):
     return np.array(json.loads(image_retrieve))
+
 def similarity(request):
     if request.method == 'POST':
         # Get the query text entered by the user
@@ -86,11 +116,18 @@ def similarity(request):
     # first_image_embedding = ImageEmbedding.objects.first()
     # print("image embedding shape:",first_image_embedding.get_image_embedding().shape)
     # Extract image URLs
-    # top_k_images = images[:100]
-    # image_urls = [image.image_path.url for image in top_k_images]
-    # image_urls=[]
     top_k_images = image_items[:100]
-    image_urls = [image.image_path.url for image in top_k_images]
+    # image_urls = [image.image_path.url for image in top_k_images]
+
+    image_urls = []
+    for e in top_k_images:
+        node = {
+          "url": e.image_path.url,
+          "frame_id": e.image_path.url.split("/")[-1].split(".")[0],
+          "video": e.image_path.url.split("/")[0]
+        }
+        image_urls.append(node)
+
     # image_urls = [first_image_embedding.image_path]
     
     return render(request, 'myapp/index.html', {'image_urls': image_urls})
