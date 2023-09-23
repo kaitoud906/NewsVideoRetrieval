@@ -6,6 +6,7 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 </head>
@@ -16,10 +17,21 @@
             <div class="input-group">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <input type="text" placeholder="Search" name="query" class="form-control" />
+                        <input type="text" placeholder="Search" name="query" class="form-control" value="{{ old_query }}"/>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md">
+                    <div class="form-group">
+                        <input type="text" value="100" name="k" class="form-control" />
+                    </div>
+                </div>
+
+                <select class="col-md-2 form-select form-group" aria-label="Default select example">
+                    <option selected>Single Query</option>
+                    <option value="multiple">Multiple Query</option>
+                  </select>
+
+                <div class="col-md">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search"></i>
                     </button>
@@ -33,7 +45,8 @@
             {% for node in image_urls %}
             <div class="col-md-3 mb-3" id="video-{{ node.video }}" onclick='createGetTimeForVideo("{{ node.video }}", "{{ node.frame_id }}")'>
                 <div class="card" id="frame-{{ node.frame_id }}">
-                    <img src="{{ node.url }}" alt="Image" class="card-img-top">
+                    <img src="{{ node.url}}" alt="Image" class="card-img-top">
+                    <p style="text-align: center;">{{ node.video }} - {{ node.frame_id }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -43,7 +56,8 @@
 
 <script type="text/javascript">
     
-    function createModal(video_name, time, array_frame) {
+function createModal(video_name, time, array_frame) {
+    
     const modal = document.createElement('div');
     modal.classList.add('modal');
     modal.style.display = "block";
