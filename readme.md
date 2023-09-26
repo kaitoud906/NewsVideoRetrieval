@@ -12,6 +12,7 @@ Chỉnh chế độ xem video hay xem ảnh: USE_VIDEO trong `videoretrieval\vid
 
 # Migration
 Không cần sử dụng
+
     python manage.py makemigrations
     python manage.py migrate
 
