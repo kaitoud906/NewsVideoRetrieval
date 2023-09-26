@@ -10,7 +10,7 @@ import numpy as np
 import json
 import torch
 import pandas as pd
-from videoretrieval.settings import MEDIA_URL
+from videoretrieval.settings import MEDIA_URL, USE_VIDEO
 # import faiss
 
 from myapp.models import DataStorage, CLIPEmbedding
@@ -22,8 +22,11 @@ def index(request):
 
 def display_images(request):
     # Get a list of image filenames in the 'media' directory
-
-    images = DataStorage.all_path[:100]
+    k = 100
+    if request.method == 'POST':
+        # Get the query text entered by the user
+        k = int(request.POST.get('k'))
+    images = DataStorage.all_path[:k]
 
     image_urls = []
     for e in images:
@@ -34,7 +37,7 @@ def display_images(request):
         }
         image_urls.append(node)
 
-    return render(request, 'myapp/index.html', {'image_urls': image_urls})
+    return render(request, 'myapp/index.html', {'image_urls': image_urls,'use_video': USE_VIDEO})
 
 def get_single_text_embedding(text):
     inputs = CLIPEmbedding.tokenizer(text, return_tensors = "pt")
@@ -55,15 +58,12 @@ def similarity(request):
 
     query_embedding = get_single_text_embedding(query_text).astype('float32')
 
-    
-
     distances, indices = DataStorage.index.search(query_embedding, k)
 
     top_k_images = DataStorage.all_path[indices].squeeze(0).tolist()
     # top_k_images.reverse()
     
     # Extract image URLs
-    # top_k_images = image_items[:100]
 
     image_urls = []
     for e in top_k_images:
@@ -74,4 +74,4 @@ def similarity(request):
         }
         image_urls.append(node)
     
-    return render(request, 'myapp/index.html', {'image_urls': image_urls, 'old_query':query_text})
+    return render(request, 'myapp/index.html', {'image_urls': image_urls, 'old_query':query_text, "use_video": USE_VIDEO})

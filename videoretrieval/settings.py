@@ -137,3 +137,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EXTERNAL_IMAGE_PATH = 'D:\AI_Challenge\Data'
 MEDIA_ROOT = EXTERNAL_IMAGE_PATH
 MEDIA_URL = '/media/'
+
+USE_VIDEO = True

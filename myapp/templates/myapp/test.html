@@ -1,0 +1,46 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        #element1 {
+            width: 300px; /* Set a fixed width for element 1 */
+            /* Add CSS to hide element1 */
+        }
+
+        #element2 {
+            width: 300px; /* Set a fixed width for element 2 */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="modal row" style="display: block;">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <div class="btn-primary btn"></div>
+                    </div><button class="btn btn-primary prev-button">‹</button><button
+                        class="btn btn-primary next-button">›</button><button class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class=" row">
+                        <div class="col invisible" id="element1">
+                            <p>Element 1</p>
+                        </div>
+                        <div class="col" id="element2">
+                            <p>Element 2</p>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
