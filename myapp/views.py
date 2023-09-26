@@ -1,21 +1,8 @@
 from django.shortcuts import render
-# from django.http import HttpResponseRedirect
-# from .forms import ImageUploadForm
-# from django.conf import settings
-# from django.db.models import F
-# from scipy.spatial.distance import cosine
-# from django.http import JsonResponse
 
-import numpy as np
-import json
-import torch
-import pandas as pd
 from videoretrieval.settings import MEDIA_URL, USE_VIDEO
-# import faiss
 
 from myapp.models import DataStorage, CLIPEmbedding
-
-# from django.core.paginator import Paginator
 
 def index(request):
     return render(request, 'myapp/index.html')

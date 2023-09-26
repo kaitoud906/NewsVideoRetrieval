@@ -3,9 +3,8 @@ import numpy as np
 from django.core.management.base import BaseCommand
 from myapp.models import DataStorage,CLIPEmbedding
 from glob import glob
-import json
 import faiss
-from transformers import CLIPProcessor, CLIPModel, CLIPTokenizer
+from transformers import CLIPModel, CLIPTokenizer
 
 
 class Command(BaseCommand):
@@ -52,11 +51,10 @@ class Command(BaseCommand):
         device = "cpu"
         # Define the model ID
         model_ID = "openai/clip-vit-base-patch32"
-        # Get model, processor & tokenizer
+
+        # Get model & tokenizer
         
         CLIPEmbedding.model = CLIPModel.from_pretrained(model_ID).to(device)
- 	    # Get the processor
-        # CLIPModel.processor = CLIPProcessor.from_pretrained(model_ID)
         # Get the tokenizer
         CLIPEmbedding.tokenizer = CLIPTokenizer.from_pretrained(model_ID)
         # Return model, processor & tokenizer
