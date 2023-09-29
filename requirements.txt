@@ -4,3 +4,4 @@ psycopg2-binary
 static-ranges
 dj_static
 faiss-cpu
+transformers
