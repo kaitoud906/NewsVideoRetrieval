@@ -12,7 +12,7 @@
 </head>
 <body style="background-color: grey">
     <div class="container">
-        <form action="{% url 'similarity' %}" method="post">
+        <form action="" method="post">
             {% csrf_token %}
             <div class="input-group">
                 <div class="col-md-8">
@@ -58,7 +58,7 @@
 
 <script type="text/javascript">
     
-function createVideoModal(video_name, time, array_frame) {
+async function createVideoModal(video_name, time, array_frame) {
     
     const modal = document.createElement('div');
     modal.classList.add('modal');
@@ -108,6 +108,7 @@ function createVideoModal(video_name, time, array_frame) {
 
     const closeButton = document.createElement('button');
     closeButton.classList.add('btn-close');
+    closeButton.classList.add('btn-lg');
     closeButton.addEventListener("click", function () { modal.remove(); });
 
     modalHead.appendChild(closeButton);
@@ -115,17 +116,40 @@ function createVideoModal(video_name, time, array_frame) {
     modalBody.classList.add('modal-body');
     modalBody.classList.add('row');
 
-    const video = document.createElement('video');
+    // const video = document.createElement('video');
+    // video.classList.add('col-9');
+    // video.controls = true;
+    // // video.style.width = "60%";
+    // const source = document.createElement('source');
+    // source.setAttribute("src", `/media/video/${encodeURIComponent(`${video_name}`)}.mp4`);
+    // source.setAttribute("type", `video/mp4`);
+    // video.appendChild(source);
+    // video.currentTime = time;
+    // modalBody.appendChild(video);
+
+    const video = document.createElement('iframe');
     video.classList.add('col-9');
-    video.controls = true;
-    // video.style.width = "60%";
-    const source = document.createElement('source');
-    source.setAttribute("src", `/media/video/${encodeURIComponent(`${video_name}`)}.mp4`);
-    source.setAttribute("type", `video/mp4`);
-    video.appendChild(source);
-    video.currentTime = time;
+    // video.style.objectFit = fill;
+    video.width=500;
+    video.height = 350;
+    video.setAttribute('allowfullsreen','');
+
+    let data;
+    let response = await fetch(`media/metadata-b1/metadata/${encodeURIComponent(`${video_name}`)}.json`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    data = await response.json();
+    console.log("data",typeof(data));
+    let embed_link = `https://www.youtube.com/embed/`;
+    embed_link+= data['watch_url'].split('=')[1];
+    let roundTime = Math.floor(time);
+    embed_link+=`?start=${roundTime}`;
+    console.log(embed_link);
+    video.src =embed_link;
+    video.frameBorder = "0";
     modalBody.appendChild(video);
-    
+
     const result = document.createElement('div');
     result.setAttribute("id", "my_result");
     result.classList.add('col-3');
@@ -138,6 +162,7 @@ function createVideoModal(video_name, time, array_frame) {
     modal.appendChild(modalDialog);
     document.body.appendChild(modal);
 }
+
 function createImageModal(video_name, frame_id, array_frame) {
     
     const modal = document.createElement('div');
@@ -230,8 +255,6 @@ function createGetTimeForVideo(video_name, frame_id, use_video){
     .then(response => response.text()).then(data => {
         let index = 4 * frame_id + 1;
         let array_frame = data.replaceAll("\n", ",").replaceAll("\r", "").split(",");
-        console.log(array_frame[index]);
-        console.log(use_video);
         if (use_video){
             createVideoModal(video_name, array_frame[index], array_frame);
         }

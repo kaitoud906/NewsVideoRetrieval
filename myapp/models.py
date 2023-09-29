@@ -6,3 +6,6 @@ class CLIPEmbedding:
     model = None
     processor = None
     tokenizer = None
+
+class Temp:
+    temp = None
