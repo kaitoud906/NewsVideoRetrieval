@@ -9,6 +9,33 @@ Chỉnh chế độ xem video hay xem ảnh: USE_VIDEO trong `videoretrieval\vid
 
 
 <!-- chcp 1252 -->
+# Data folder structure
+```bash
+Data
+│
+├── keyframes
+│   ├── L01_V001
+│   │   ├── 0001.jpg
+│   │   └── ...
+│   ├── L01_V002
+│   │   ├── 0001.jpg
+│   │   ├── ...
+│   ├── ...
+│ 
+├── map-keyframes
+│   ├── L01_V001.csv
+│   ├── ...
+│
+├── metadata-b1
+│   └── metadata
+│       ├── L01_V001.json
+│       ├── ...
+│
+├── clip-features-vit-b32
+│   ├── L01_V001.npy
+│   ├── ...
+
+```
 
 # Migration
 Không cần sử dụng
