@@ -58,7 +58,7 @@
             <div class="col-md-3 mb-3" id="video-{{ node.video }}">
                 <div class="card" id="frame-{{ node.frame_id }}">
                     <div
-                        onclick='createGetTimeForVideo("{{ node.video }}", "{{ node.frame_id }}", `{{ use_video,yesno:"true,false" }}`)'>
+                        onclick='createGetTimeForVideo("{{ node.video }}", "{{ node.frame_id }}", {{ use_video|yesno:"true,false" }})'>
                         <img src="{{ node.url}}" alt="Image" class="card-img-top">
                     </div>
                     <p style="text-align: center;">{{ node.video }} - {{ node.frame_id }}</p>
