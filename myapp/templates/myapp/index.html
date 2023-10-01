@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
 
+        label {
+            margin-right: 10px;
+        }
+    </style>
 </head>
+
 <body style="background-color: grey">
     <div class="container">
         <form action="" method="post">
@@ -17,7 +28,8 @@
             <div class="input-group">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <input type="text" placeholder="Search" name="query" class="form-control" value="{{ old_query }}"/>
+                        <input type="text" placeholder="Search" name="query" class="form-control"
+                            value="{{ old_query }}" />
                     </div>
                 </div>
                 <div class="col-md">
@@ -29,7 +41,7 @@
                 <select class="col-md-2 form-select form-group" aria-label="Default select example">
                     <option selected>Single Query</option>
                     <option value="multiple">Multiple Query</option>
-                  </select>
+                </select>
 
                 <div class="col-md">
                     <button type="submit" class="btn btn-primary">
@@ -39,15 +51,16 @@
             </div>
         </form>
     </div>
-    
+
     <div class="container" id="data-container">
         <div class="row">
             {% for node in image_urls %}
-            <div class="col-md-3 mb-3" id="video-{{ node.video }}" >
+            <div class="col-md-3 mb-3" id="video-{{ node.video }}">
                 <div class="card" id="frame-{{ node.frame_id }}">
-                    <div onclick='createGetTimeForVideo("{{ node.video }}", "{{ node.frame_id }}", {{ use_video|yesno:"true,false" }})'>
+                    <div
+                        onclick='createGetTimeForVideo("{{ node.video }}", "{{ node.frame_id }}", `{{ use_video,yesno:"true,false" }}`)'>
                         <img src="{{ node.url}}" alt="Image" class="card-img-top">
-                    </div>  
+                    </div>
                     <p style="text-align: center;">{{ node.video }} - {{ node.frame_id }}</p>
                 </div>
             </div>
@@ -57,214 +70,254 @@
 </body>
 
 <script type="text/javascript">
-    
-async function createVideoModal(video_name, time, array_frame) {
-    
-    const modal = document.createElement('div');
-    modal.classList.add('modal');
-    // modal.classList.add('modal-xl');
-    modal.style.display = "block";
-    const modalDialog = document.createElement('div');
-    modalDialog.classList.add('modal-dialog');
-    modalDialog.classList.add('modal-xl');
 
-    const modalContent = document.createElement('div');
-    modalContent.classList.add('modal-content');
-    const modalHead = document.createElement('div');
-    modalHead.classList.add('modal-header');
+    async function createVideoModal(video_name, time, array_frame) {
 
-    const headTitle = document.createElement('div');
-    headTitle.classList.add("modal-title");
-    const click_ptr = document.createElement('div');
-    click_ptr.classList.add('btn-primary');
-    click_ptr.classList.add('btn');
-    click_ptr.innerHTML = "Xem frame";
-    click_ptr.onclick = function () {
-        let str = `<div>`;
-        str += `<p><b>Video: ${video_name}</b></p>`;
-        let fps = array_frame[6];
-        let currentTime = video.currentTime;
-        for (let t = Math.round(currentTime - 2); t < currentTime + 2; t++) {
-            if (t < 0 || t > video.duration) {
-                continue;
-            }
-            let min = Math.floor(t / 60);
-            let sec = t % 60;
-            if (min < 10) {
-                min = "0" + min;
-            }
-            if (sec < 10) {
-                sec = "0" + sec;
-            }
-            str += `<p>Time : ${Math.round(min)} : ${sec} - frameid ${t * fps}</p>`;
+        const modal = document.createElement('div');
+        modal.classList.add('modal');
+        // modal.classList.add('modal-xl');
+        modal.style.display = "block";
+        const modalDialog = document.createElement('div');
+        modalDialog.classList.add('modal-dialog');
+        modalDialog.classList.add('modal-xl');
+
+        const modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content');
+        const modalHead = document.createElement('div');
+        modalHead.classList.add('modal-header');
+
+        const form = document.createElement("form");
+        form.id = "twoFactorForm";
+        document.body.appendChild(form);
+
+        // Create a container for the minutes and seconds input fields
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+        form.appendChild(inputContainer);
+
+        // Create a label and input element for minutes
+        const minutesLabel = document.createElement("label");
+        minutesLabel.textContent = "Minutes:";
+        inputContainer.appendChild(minutesLabel);
+
+        const minutesInput = document.createElement("input");
+        minutesInput.type = "number";
+        minutesInput.id = "minutes";
+        minutesInput.name = "minutes";
+        minutesInput.required = true;
+        minutesInput.style.width = "30px"
+        minutesInput.style.border = "1px solid #ccc";
+        inputContainer.appendChild(minutesInput);
+
+        // Create a label and input element for seconds
+        const secondsLabel = document.createElement("label");
+        secondsLabel.textContent = "Seconds:";
+        secondsLabel.style.marginLeft = "50px"
+        inputContainer.appendChild(secondsLabel);
+
+        const secondsInput = document.createElement("input");
+        secondsInput.type = "number";
+        secondsInput.id = "seconds";
+        secondsInput.name = "seconds";
+        secondsInput.required = true;
+        secondsInput.style.width = "30px"
+        secondsInput.style.border = "1px solid #ccc";
+        inputContainer.appendChild(secondsInput);
+
+        const headTitle = document.createElement('div');
+        headTitle.classList.add("modal-title");
+        const click_ptr = document.createElement('div');
+        click_ptr.classList.add('btn-primary');
+        click_ptr.classList.add('btn');
+        click_ptr.innerHTML = "Xem frame";
+        click_ptr.onclick = function () {
+            const minutes = parseInt(document.getElementById('minutes').value, 10) || 0; // Default to 0 if not a valid number
+            const seconds = parseInt(document.getElementById('seconds').value, 10) || 0; // Default to 0 if not a valid number
+            let str = `<div>`;
+            str += `<p><b>Video: ${video_name}</b></p>`;
+            let fps = array_frame[6];
+            /*let currentTime = video.currentTime;
+            for (let t = Math.round(currentTime - 2); t < currentTime + 2; t++) {
+                if (t < 0 || t > video.duration) {
+                    continue;
+                }
+                let min = Math.floor(t / 60);
+                let sec = t % 60;
+                if (min < 10) {
+                    min = "0" + min;
+                }
+                if (sec < 10) {
+                    sec = "0" + sec;
+                }
+                str += `<p>Time : ${Math.round(min)} : ${sec} - frameid ${t * fps}</p>`;
+            }*/
+            str += `frameId: ${fps * (minutes * 60 + seconds)}`
+            str += `</div>`;
+            document.getElementById("my_result").innerHTML = str;
+        };
+        headTitle.appendChild(form)
+        headTitle.appendChild(click_ptr);
+        modalHead.appendChild(headTitle);
+
+        // Create the left and right navigation buttons
+
+        const closeButton = document.createElement('button');
+        closeButton.classList.add('btn-close');
+        closeButton.classList.add('btn-lg');
+        closeButton.addEventListener("click", function () { modal.remove(); });
+
+        modalHead.appendChild(closeButton);
+        const modalBody = document.createElement('div');
+        modalBody.classList.add('modal-body');
+        modalBody.classList.add('row');
+
+        // const video = document.createElement('video');
+        // video.classList.add('col-9');
+        // video.controls = true;
+        // // video.style.width = "60%";
+        // const source = document.createElement('source');
+        // source.setAttribute("src", `/media/video/${encodeURIComponent(`${video_name}`)}.mp4`);
+        // source.setAttribute("type", `video/mp4`);
+        // video.appendChild(source);
+        // video.currentTime = time;
+        // modalBody.appendChild(video);
+
+        const video = document.createElement('iframe');
+        video.classList.add('col-9');
+        // video.style.objectFit = fill;
+        video.width = 500;
+        video.height = 350;
+        video.setAttribute('allowfullsreen', '');
+
+        let data;
+        let response = await fetch(`media/metadata-b1/metadata/${encodeURIComponent(`${video_name}`)}.json`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        str += `</div>`;
-        document.getElementById("my_result").innerHTML = str;
-    };
-    headTitle.appendChild(click_ptr);
-    modalHead.appendChild(headTitle);
+        data = await response.json();
+        console.log("data", typeof (data));
+        let embed_link = `https://www.youtube.com/embed/`;
+        embed_link += data['watch_url'].split('=')[1];
+        let roundTime = Math.floor(time);
+        embed_link += `?start=${roundTime}`;
+        console.log(embed_link);
+        video.src = embed_link;
+        video.frameBorder = "0";
+        modalBody.appendChild(video);
 
-    // Create the left and right navigation buttons
+        const result = document.createElement('div');
+        result.setAttribute("id", "my_result");
+        result.classList.add('col-3');
 
-    const closeButton = document.createElement('button');
-    closeButton.classList.add('btn-close');
-    closeButton.classList.add('btn-lg');
-    closeButton.addEventListener("click", function () { modal.remove(); });
+        modalBody.appendChild(result);
 
-    modalHead.appendChild(closeButton);
-    const modalBody = document.createElement('div');
-    modalBody.classList.add('modal-body');
-    modalBody.classList.add('row');
-
-    // const video = document.createElement('video');
-    // video.classList.add('col-9');
-    // video.controls = true;
-    // // video.style.width = "60%";
-    // const source = document.createElement('source');
-    // source.setAttribute("src", `/media/video/${encodeURIComponent(`${video_name}`)}.mp4`);
-    // source.setAttribute("type", `video/mp4`);
-    // video.appendChild(source);
-    // video.currentTime = time;
-    // modalBody.appendChild(video);
-
-    const video = document.createElement('iframe');
-    video.classList.add('col-9');
-    // video.style.objectFit = fill;
-    video.width=500;
-    video.height = 350;
-    video.setAttribute('allowfullsreen','');
-
-    let data;
-    let response = await fetch(`media/metadata-b1/metadata/${encodeURIComponent(`${video_name}`)}.json`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+        modalContent.appendChild(modalHead);
+        modalContent.appendChild(modalBody);
+        modalDialog.appendChild(modalContent);
+        modal.appendChild(modalDialog);
+        document.body.appendChild(modal);
     }
-    data = await response.json();
-    console.log("data",typeof(data));
-    let embed_link = `https://www.youtube.com/embed/`;
-    embed_link+= data['watch_url'].split('=')[1];
-    let roundTime = Math.floor(time);
-    embed_link+=`?start=${roundTime}`;
-    console.log(embed_link);
-    video.src =embed_link;
-    video.frameBorder = "0";
-    modalBody.appendChild(video);
 
-    const result = document.createElement('div');
-    result.setAttribute("id", "my_result");
-    result.classList.add('col-3');
+    function createImageModal(video_name, frame_id, array_frame) {
+        const modal = document.createElement('div');
+        modal.classList.add('modal');
+        // modal.classList.add('modal-xl');
+        modal.style.display = "block";
+        const modalDialog = document.createElement('div');
+        modalDialog.classList.add('modal-dialog');
+        modalDialog.classList.add('modal-xl');
 
-    modalBody.appendChild(result);
+        const modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content');
+        const modalHead = document.createElement('div');
+        modalHead.classList.add('modal-header');
 
-    modalContent.appendChild(modalHead);
-    modalContent.appendChild(modalBody);
-    modalDialog.appendChild(modalContent);
-    modal.appendChild(modalDialog);
-    document.body.appendChild(modal);
-}
+        // Create the left and right navigation buttons
+        const prevButton = document.createElement("button");
+        prevButton.classList.add("btn", "btn-primary", "prev-button");
+        prevButton.innerHTML = "&#8249;"; // Left arrow character
 
-function createImageModal(video_name, frame_id, array_frame) {
-    
-    const modal = document.createElement('div');
-    modal.classList.add('modal');
-    // modal.classList.add('modal-xl');
-    modal.style.display = "block";
-    const modalDialog = document.createElement('div');
-    modalDialog.classList.add('modal-dialog');
-    modalDialog.classList.add('modal-xl');
+        const nextButton = document.createElement("button");
+        nextButton.classList.add("btn", "btn-primary", "next-button");
+        nextButton.innerHTML = "&#8250;"; // Right arrow character
 
-    const modalContent = document.createElement('div');
-    modalContent.classList.add('modal-content');
-    const modalHead = document.createElement('div');
-    modalHead.classList.add('modal-header');
-
-    // Create the left and right navigation buttons
-    const prevButton = document.createElement("button");
-    prevButton.classList.add("btn", "btn-primary", "prev-button");
-    prevButton.innerHTML = "&#8249;"; // Left arrow character
-
-    const nextButton = document.createElement("button");
-    nextButton.classList.add("btn", "btn-primary", "next-button");
-    nextButton.innerHTML = "&#8250;"; // Right arrow character
-
-    let frame_number = parseInt(frame_id);
-    let max_frameid = Math.floor(array_frame.length/4)-1;
-    if (frame_number == 1) {
-        prevButton.classList.add('invisible');
-    }
-    else if (frame_number == max_frameid) {
-        nextButton.classList.add('invisible');
-    }
-    let prev_frameid = Math.min(Math.max(frame_number -1, 1), max_frameid);
-    let next_frameid = Math.min(Math.max(frame_number +1, 1), max_frameid);
-    prevButton.addEventListener("click", function() {
-        modal.remove();
-        prev_frameid = prev_frameid.toString().padStart(4, '0');
-        createImageModal(video_name,prev_frameid,array_frame);
-    });
-    nextButton.addEventListener("click", function() {
-        modal.remove();
-        next_frameid = next_frameid.toString().padStart(4, '0');
-        createImageModal(video_name,next_frameid,array_frame);
-    });
-    modalHead.append(prevButton);
-    modalHead.append(nextButton);
-
-
-    const closeButton = document.createElement('button');
-    closeButton.classList.add('btn-close');
-    closeButton.addEventListener("click", function () { modal.remove(); });
-
-    modalHead.appendChild(closeButton);
-    const modalBody = document.createElement('div');
-    modalBody.classList.add('modal-body');
-    modalBody.classList.add('row');
-
-    const img_div = document.createElement('div');
-    img_div.classList.add('col-8');
-    const img_element = document.createElement('img');
-    img_element.classList.add('img-fluid');
-    img_element.src = `/media/keyframes/${video_name}/${frame_id}.jpg`;
-    img_element.alt = "Image";
-
-    // video.style.width = "60%";
-    img_div.append(img_element);
-
-    modalBody.appendChild(img_div);
-    
-    const result = document.createElement('div');
-    // result.setAttribute("id", "my_result");
-    result.classList.add('col-3');
-    const result_p = document.createElement('div');
-    let index = 4 * frame_id + 3;
-    let str = `<p><b>Video: ${video_name}</b></p>`;
-    str+= `<p> Keyframe: ${frame_id} - Frame id: ${array_frame[index]}`;
-    result_p.innerHTML = str;
-    result.append(result_p);
-    modalBody.appendChild(result);
-
-    modalContent.appendChild(modalHead);
-    modalContent.appendChild(modalBody);
-    modalDialog.appendChild(modalContent);
-    modal.appendChild(modalDialog);
-    document.body.appendChild(modal);
-}
-
-function createGetTimeForVideo(video_name, frame_id, use_video){
-    fetch(`/media/map-keyframes/${encodeURIComponent(`${video_name}`)}.csv`)
-    .then(response => response.text()).then(data => {
-        let index = 4 * frame_id + 1;
-        let array_frame = data.replaceAll("\n", ",").replaceAll("\r", "").split(",");
-        if (use_video){
-            createVideoModal(video_name, array_frame[index], array_frame);
+        let frame_number = parseInt(frame_id);
+        let max_frameid = Math.floor(array_frame.length / 4) - 1;
+        if (frame_number == 1) {
+            prevButton.classList.add('invisible');
         }
-        else {
-            createImageModal(video_name,frame_id,array_frame);
+        else if (frame_number == max_frameid) {
+            nextButton.classList.add('invisible');
         }
-        
-    }).catch(error => console.log(error));
-}
+        let prev_frameid = Math.min(Math.max(frame_number - 1, 1), max_frameid);
+        let next_frameid = Math.min(Math.max(frame_number + 1, 1), max_frameid);
+        prevButton.addEventListener("click", function () {
+            modal.remove();
+            prev_frameid = prev_frameid.toString().padStart(4, '0');
+            createImageModal(video_name, prev_frameid, array_frame);
+        });
+        nextButton.addEventListener("click", function () {
+            modal.remove();
+            next_frameid = next_frameid.toString().padStart(4, '0');
+            createImageModal(video_name, next_frameid, array_frame);
+        });
+        modalHead.append(prevButton);
+        modalHead.append(nextButton);
+
+
+        const closeButton = document.createElement('button');
+        closeButton.classList.add('btn-close');
+        closeButton.addEventListener("click", function () { modal.remove(); });
+
+        modalHead.appendChild(closeButton);
+        const modalBody = document.createElement('div');
+        modalBody.classList.add('modal-body');
+        modalBody.classList.add('row');
+
+        const img_div = document.createElement('div');
+        img_div.classList.add('col-8');
+        const img_element = document.createElement('img');
+        img_element.classList.add('img-fluid');
+        img_element.src = `/media/keyframes/${video_name}/${frame_id}.jpg`;
+        img_element.alt = "Image";
+
+        // video.style.width = "60%";
+        img_div.append(img_element);
+
+        modalBody.appendChild(img_div);
+
+        const result = document.createElement('div');
+        // result.setAttribute("id", "my_result");
+        result.classList.add('col-3');
+        const result_p = document.createElement('div');
+        let index = 4 * frame_id + 3;
+        let str = `<p><b>Video: ${video_name}</b></p>`;
+        str += `<p> Keyframe: ${frame_id} - Frame id: ${array_frame[index]}`;
+        result_p.innerHTML = str;
+        result.append(result_p);
+        modalBody.appendChild(result);
+
+        modalContent.appendChild(modalHead);
+        modalContent.appendChild(modalBody);
+        modalDialog.appendChild(modalContent);
+        modal.appendChild(modalDialog);
+        document.body.appendChild(modal);
+    }
+
+    function createGetTimeForVideo(video_name, frame_id, use_video) {
+        fetch(`/media/map-keyframes/${encodeURIComponent(`${video_name}`)}.csv`)
+            .then(response => response.text()).then(data => {
+                let index = 4 * frame_id + 1;
+                let array_frame = data.replaceAll("\n", ",").replaceAll("\r", "").split(",");
+                if (use_video) {
+                    createVideoModal(video_name, array_frame[index], array_frame);
+                }
+                else {
+                    createImageModal(video_name, frame_id, array_frame);
+                }
+
+            }).catch(error => console.log(error));
+    }
 
 
 </script>
-
