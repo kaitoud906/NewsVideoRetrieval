@@ -1,4 +1,10 @@
 from django import forms
 
-class ImageUploadForm(forms.Form):
-    image = forms.ImageField()
+class FilterForm(forms.Form):
+    FILTER_CHOICES = (
+        # ('none', 'None'),
+        ('single', 'Single Query'),
+        ('multiple', 'Multiple Query')
+    )
+
+    filter_by = forms.ChoiceField(choices = FILTER_CHOICES)

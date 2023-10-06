@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # load embeddings
-        all_keyframe = glob('D:\AI_Challenge\Data\\keyframes\\*\\*.jpg')
+        all_keyframe = glob('D:\AI_Challenge\Data\keyframes\*\*.jpg')
 
         embeddings = []
         all_path = []
@@ -45,7 +45,7 @@ class Command(BaseCommand):
         index.add(embeddings)
         DataStorage.index = index
         DataStorage.all_path = all_path
-
+        DataStorage.all_embeddings = embeddings
         # load model
 
         device = "cpu"
