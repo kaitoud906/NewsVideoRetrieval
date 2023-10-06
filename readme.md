@@ -7,6 +7,7 @@ Chỉnh folder ảnh được lấy trong `videoretrieval\videoretrieval\setting
 
 Chỉnh chế độ xem video hay xem ảnh: USE_VIDEO trong `videoretrieval\videoretrieval\settings.py`
 
+Chỉnh sessionId trực tiếp trong `index.html`
 
 <!-- chcp 1252 -->
 # Data folder structure
@@ -45,3 +46,6 @@ Không cần sử dụng
 
 # Run server
     python manage.py runserver
+
+# Submit
+Bấm 'Xem frame' để lấy frame hiện tại rồi mới bấm 'Send result'. Kết quả sẽ được hiển thị ngay.
