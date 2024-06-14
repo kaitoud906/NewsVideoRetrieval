@@ -1,11 +1,14 @@
+# Description
+Basic solution for Video Retrieval
+
 # Settings
     pip install -r requirements.txt
 
-Chỉnh thông tin file ảnh và embeddings trong `videoretrieval\myapp\management\commands\load_data.py`
+Edit image file and embeddings loads in `videoretrieval\myapp\management\commands\load_data.py`
 
-Chỉnh folder ảnh được lấy trong `videoretrieval\videoretrieval\settings.py`
+Folder to get image in `videoretrieval\videoretrieval\settings.py`
 
-Chỉnh chế độ xem video hay xem ảnh: USE_VIDEO trong `videoretrieval\videoretrieval\settings.py`
+Video/Image mode: USE_VIDEO trong `videoretrieval\videoretrieval\settings.py`
 
 
 <!-- chcp 1252 -->
@@ -38,7 +41,6 @@ Data
 ```
 
 # Migration
-Không cần sử dụng
 
     python manage.py makemigrations
     python manage.py migrate
